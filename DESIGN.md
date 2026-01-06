@@ -315,18 +315,19 @@ Rebalance-backtest/
 │   └── backtest/
 │       └── main.go
 ├── internal/                     # Go 内部包
+│   ├── config/                   # 配置加载
+│   │   └── config.go
 │   ├── engine/                   # 回测引擎
-│   │   ├── engine.go
-│   │   └── engine_test.go
+│   │   └── engine.go
 │   ├── strategy/                 # 策略实现
-│   │   ├── interface.go
-│   │   ├── fixed_weight.go
-│   │   ├── threshold.go
-│   │   └── time_based.go
+│   │   ├── interface.go          # 策略接口
+│   │   ├── fixed_weight.go       # 固定权重策略
+│   │   ├── time_based.go         # 定期再平衡策略
+│   │   ├── valuation.go          # 估值驱动策略 ✨
+│   │   └── weighted_valuation.go # 权重+估值策略 ✨
 │   ├── data/                     # 数据加载
-│   │   ├── loader.go
-│   │   ├── csv_loader.go
-│   │   └── api_loader.go
+│   │   ├── loader.go             # 加载器接口
+│   │   └── csv_loader.go         # CSV加载器
 │   ├── cost/                     # 成本模型
 │   │   └── cost_model.go
 │   └── portfolio/                # 投资组合管理
@@ -337,34 +338,31 @@ Rebalance-backtest/
 ├── python/                       # Python 分析模块
 │   ├── analysis/
 │   │   ├── __init__.py
-│   │   ├── metrics.py            # 性能指标
-│   │   └── risk.py               # 风险分析
-│   ├── visualization/
-│   │   ├── __init__.py
-│   │   ├── charts.py             # 图表生成
-│   │   └── report.py             # 报告生成
-│   └── utils/
+│   │   ├── analyzer.py
+│   │   └── metrics.py
+│   └── visualization/
 │       ├── __init__.py
-│       └── data_loader.py        # 数据加载工具
+│       ├── charts.py
+│       └── report.py
 ├── configs/                      # 配置文件
-│   ├── default.yaml
-│   └── strategies/
-│       ├── fixed_weight.yaml
-│       └── threshold.yaml
+│   ├── default.yaml              # 默认配置
+│   ├── xueying_config.yaml       # 雪盈账户配置 ✨
+│   └── pingan_config.yaml        # 平安证券配置 ✨
 ├── data/                         # 数据目录
-│   └── sample/
+│   ├── sample/                   # 示例数据 (SPY/QQQ/TLT/GLD)
+│   ├── xueying/                  # 雪盈账户数据 ✨ (9个美股ETF)
+│   └── pingan/                   # 平安证券数据 ✨ (12个A股ETF)
 ├── output/                       # 输出目录
-├── tests/                        # 测试
-│   ├── go/
-│   └── python/
+│   ├── xueying/                  # 雪盈回测结果
+│   └── pingan/                   # 平安回测结果
 ├── scripts/                      # 辅助脚本
-│   ├── run_backtest.sh
-│   └── generate_report.py
+│   ├── analyze.py                # 分析脚本
+│   ├── download_xueying_data.py  # 雪盈数据下载 ✨
+│   └── download_pingan_data.py   # 平安数据下载 ✨
 ├── go.mod
 ├── go.sum
 ├── requirements.txt              # Python 依赖
-├── Makefile
-├── README.md
+├── .gitignore                    # Git忽略规则
 └── DESIGN.md                     # 本文档
 ```
 
