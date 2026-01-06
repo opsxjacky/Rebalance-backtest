@@ -163,8 +163,8 @@ type RebalanceStrategy interface {
 | `FixedWeight` | 固定权重再平衡，维持预设的资产配比 |
 | `ThresholdBased` | 阈值触发再平衡，偏离超过阈值时触发 |
 | `TimeBased` | 定期再平衡，按固定时间间隔执行 |
-| `VolatilityBased` | 波动率驱动，根据市场波动调整频率 |
-| `TaxAware` | 税务优化再平衡，考虑税收影响 |
+| `Valuation` | 估值驱动再平衡，基于PE百分位/PEG/ROE等指标 |
+| `WeightedValuation` | 权重偏离+估值信号驱动，结合偏离阈值和估值判断 |
 
 #### 3.2.3 策略配置示例
 
@@ -453,29 +453,29 @@ generator.generate_html_report(metrics, "output/report.html")
 
 ## 7. 开发路线
 
-### Phase 1: 基础框架
-- [ ] 项目初始化和目录结构
-- [ ] 核心数据结构定义
-- [ ] CSV 数据加载器
-- [ ] 基础投资组合管理
+### Phase 1: 基础框架 ✅
+- [x] 项目初始化和目录结构
+- [x] 核心数据结构定义
+- [x] CSV 数据加载器
+- [x] 基础投资组合管理
 
-### Phase 2: 回测引擎
-- [ ] 回测引擎核心实现
-- [ ] 固定权重再平衡策略
-- [ ] 阈值触发再平衡策略
-- [ ] 交易成本模型
+### Phase 2: 回测引擎 ✅
+- [x] 回测引擎核心实现
+- [x] 固定权重再平衡策略
+- [x] 阈值触发再平衡策略
+- [x] 交易成本模型
 
-### Phase 3: Python 分析
-- [ ] 性能指标计算模块
-- [ ] 风险分析模块
-- [ ] 可视化图表
-- [ ] HTML 报告生成
+### Phase 3: 估值策略 ✅
+- [x] 估值驱动策略 (Valuation)
+- [x] 权重偏离+估值策略 (WeightedValuation)
+- [x] Yahoo Finance 数据下载脚本
+- [x] A股 ETF 数据支持
 
 ### Phase 4: 扩展功能
-- [ ] 更多数据源支持 (API)
-- [ ] 更多再平衡策略
+- [x] 多策略配置支持
+- [ ] Python 可视化图表
+- [ ] HTML 报告生成
 - [ ] 参数优化功能
-- [ ] 多策略对比分析
 
 ---
 
@@ -541,83 +541,70 @@ plotly>=5.18.0
 jinja2>=3.1.0
 ```
 
-ExportBlock-824f691f-1ba2-4af5-9e6c-a52f83c805a2-Part-1 这个文件是我的投资组合数据 不要上传到代码仓库
+### 8.3 已实现策略
 
-lets(
-  /* ═══════════════════════════════════════════════════
-     1. 基础变量
-  ═══════════════════════════════════════════════════ */
-  account, prop("账户"),
-  type, prop("资产类型"),
-  raw_pe_rank, prop("PE百分位"),
-  pe_val, prop("PE"),
-  name, prop("股票名称"),
-  roe, prop("ROE"),
-  peg_val, prop("PEG"),
-  pl_val, prop("浮动盈亏"),
+#### 估值驱动策略 (Valuation)
+基于 PE 百分位、PEG、ROE 等基本面指标动态调整持仓权重。
 
-  /* 归一化 PE百分位（统一为整数格式，如 98.33） */
-  pe_rank, if(and(not(empty(raw_pe_rank)), raw_pe_rank <= 1), raw_pe_rank * 100, raw_pe_rank),
+**信号逻辑：**
+- PE百分位 ≥ 90：极度高估，触发卖出
+- PE百分位 ≥ 75：高估，观察
+- PE百分位 ≤ 20：低估，买入机会
+- 核心ETF (SPY/QQQ/DXJ)：极高估时动态再平衡，不完全卖出
+- 科技ETF (SMH/QTUM)：趋势跟随，高估时持有
 
-  /* ═══════════════════════════════════════════════════
-     2. 前置条件
-  ═══════════════════════════════════════════════════ */
-  
-  /* 非雪盈账户直接返回空 */
-  if(not(contains(account, "雪盈")), "",
+#### 权重偏离+估值策略 (WeightedValuation)
+结合权重偏离阈值和估值信号的复合策略。
 
-  lets(
-    /* ═══════════════════════════════════════════════════
-       3. 派生变量
-    ═══════════════════════════════════════════════════ */
-    
-    /* 资产分类 */
-    is_trash, and(pl_val < 0, or(empty(pe_val), roe < 5)),
-    is_safe, or(type == "债券", type == "黄金", type == "现金"),
-    is_core, test(name, "SPY|标普|S&P|QQQ|纳指|Nasdaq|DXJ|日经|Japan"),
-    is_tech, test(name, "半导体|科技|Semiconductor|SMH|AI|XLK|QTUM"),
-    
-    /* 估值区间 */
-    is_extreme_high, and(not(empty(pe_rank)), pe_rank >= 90),
-    is_high, and(not(empty(pe_rank)), pe_rank >= 75),
-    is_low, and(not(empty(pe_rank)), pe_rank <= 20),
-    is_core_low, and(or(is_tech, is_core), not(empty(pe_rank)), pe_rank <= 50),
+**核心参数：**
+- 偏离阈值：10%（超过触发再平衡）
+- PE百分位：高估 >70%，低估 <30%
+- 恒生ETF：PE+PB双因子判断
+- 债券ETF：Yield阈值判断
 
-    /* ═══════════════════════════════════════════════════
-       4. 输出逻辑
-    ═══════════════════════════════════════════════════ */
-    ifs(
-      /* 熔断：垃圾股优先拦截 */
-      is_trash, "🔴 极高 (基本面差)",
-      
-      /* 安全资产 */
-      is_safe, "⚪️ 按权重配置",
-      
-      /* ETF */
-      type == "ETF", ifs(
-        and(is_extreme_high, is_core), "🟠 动态再平衡 (Trim)",
-        and(is_extreme_high, is_tech), "🟠 趋势持有 (Tech)",
-        is_extreme_high, "🔴 极度高估 (卖出)",
-        or(is_low, is_core_low), "🟢 低估机会 (买入)",
-        is_high, "🟡 偏高 (观察)",
-        "⚪️ 正常持有"
-      ),
-      
-      /* 个股 */
-      type == "个股", ifs(
-        and(pe_rank >= 80, peg_val > 2.5), "🔴 泡沫破裂 (PEG过高)",
-        peg_val > 2.0, "🟠 估值透支 (减仓)",
-        or(and(not(empty(peg_val)), peg_val < 1.5), roe >= 20), "🟢 优质持有",
-        pe_rank >= 80, "🟠 估值过高 (减仓)",
-        "⚪️ 正常"
-      ),
-      
-      /* 兜底 */
-      "❓ 未知类型"
-    )
-  ))
-)
+---
 
-这个是我的投资组合策略，帮我进行回测看看结果
-mynotion 是我的投资组合数据，这个数据不要上传到github
-先帮我回测一下雪盈的股票代码，这个是估值策略，没有设置权重
+## 9. 回测结果
+
+### 9.1 雪盈账户 (估值策略)
+
+| 指标 | 数值 |
+|------|------|
+| 策略类型 | Valuation |
+| 回测期间 | 2022-01-03 至 2025-12-31 |
+| 初始资金 | $100,000 |
+| 最终价值 | $206,263 |
+| **总收益率** | **106.26%** |
+| 总交易次数 | 767 笔 |
+| 手续费 | $791.24 |
+
+### 9.2 平安证券账户 (权重+估值策略)
+
+| 指标 | 数值 |
+|------|------|
+| 策略类型 | WeightedValuation |
+| 回测期间 | 2022-01-03 至 2025-12-31 |
+| 初始资金 | ¥1,000,000 |
+| 最终价值 | ¥1,362,818 |
+| **总收益率** | **36.28%** |
+| 总交易次数 | 1615 笔 |
+| 手续费 | ¥15,102.46 |
+
+---
+
+## 10. 运行说明
+
+```bash
+# 编译项目
+go build -o backtest ./cmd/backtest
+
+# 运行雪盈账户回测
+./backtest run --config configs/xueying_config.yaml
+
+# 运行平安证券账户回测
+./backtest run --config configs/pingan_config.yaml
+
+# 下载历史数据
+python scripts/download_xueying_data.py   # 雪盈
+python scripts/download_pingan_data.py    # 平安
+```

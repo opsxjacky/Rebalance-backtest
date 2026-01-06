@@ -1,0 +1,87 @@
+# Rebalance-Backtest 平安证券账户配置文件
+# 权重偏离 + 估值信号 策略
+
+backtest:
+  start_date: "2022-01-01"
+  end_date: "2025-12-31"
+  initial_capital: 1000000  # 人民币100万
+  benchmark: "510300"       # 沪深300作为基准
+  data_dir: "data/pingan"
+
+assets:
+  # 恒生ETF (特殊处理：PE+PB双因子)
+  - symbol: "159920"
+    name: "华夏恒生ETF"
+  
+  # 股票ETF
+  - symbol: "159941"
+    name: "广发纳斯达克100ETF"
+  - symbol: "510300"
+    name: "华泰柏瑞沪深300ETF"
+  - symbol: "510500"
+    name: "南方中证500ETF"
+  - symbol: "513050"
+    name: "易方达中证海外中国互联网50"
+  - symbol: "513500"
+    name: "博时标普500ETF"
+  
+  # 债券ETF (特殊处理：Yield阈值)
+  - symbol: "511010"
+    name: "国泰上证5年期国债ETF"
+  - symbol: "511090"
+    name: "鹏扬中债-30年期国债ETF"
+  - symbol: "511260"
+    name: "国泰上证10年期国债ETF"
+  - symbol: "511380"
+    name: "博时可转债ETF"
+  - symbol: "511520"
+    name: "富国中债7-10年政策性金融债ETF"
+  
+  # 黄金
+  - symbol: "518880"
+    name: "华安黄金易ETF"
+
+strategy:
+  name: "平安证券权重估值策略"
+  type: "weighted_valuation"
+  params:
+    # 目标权重 (来自 Notion)
+    target_weights:
+      "159920": 0.025   # 恒生 2.5%
+      "159941": 0.05    # 纳斯达克 5%
+      "510300": 0.10    # 沪深300 10%
+      "510500": 0.05    # 中证500 5%
+      "511010": 0.10    # 5年期国债 10%
+      "511090": 0.095   # 30年期国债 9.5%
+      "511260": 0.10    # 10年期国债 10%
+      "511380": 0.05    # 可转债 5%
+      "511520": 0.10    # 7-10年政策性金融债 10%
+      "513050": 0.03    # 中国互联网 3%
+      "513500": 0.10    # 标普500 10%
+      "518880": 0.10    # 黄金 10%
+    
+    # 偏离阈值 10%
+    threshold: 0.10
+    min_trade_value: 1000  # 最小交易金额
+    min_rebalance_interval: 7
+
+    # 估值参数
+    valuation:
+      # PE百分位阈值 (归一化到0-1)
+      high_pe_rank: 0.70
+      low_pe_rank: 0.30
+      
+      # 恒生ETF PB阈值
+      pb_low: 1.0
+      pb_high: 1.3
+
+costs:
+  commission_rate: 0.00025  # A股ETF佣金 万2.5
+  min_commission: 5.0       # 最低佣金
+  slippage_rate: 0.0003     # 滑点 0.03%
+  tax_rate: 0               # ETF无印花税
+
+output:
+  format: "json"
+  path: "output/pingan/"
+  generate_report: true
