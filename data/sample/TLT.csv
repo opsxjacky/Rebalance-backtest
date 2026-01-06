@@ -1,0 +1,27 @@
+Date,Open,High,Low,Close,Volume,Adj Close,PE,PE_Rank,PEG,ROE,Asset_Type,Name,Is_Core,Is_Tech
+2020-01-02,138.56,139.28,137.89,138.72,8560000,138.72,0,0,0,0,债券,20+ Year Treasury Bond ETF,false,false
+2020-01-03,140.23,141.56,139.87,141.12,9230000,141.12,0,0,0,0,债券,20+ Year Treasury Bond ETF,false,false
+2020-01-06,142.18,143.22,141.67,142.89,8890000,142.89,0,0,0,0,债券,20+ Year Treasury Bond ETF,false,false
+2020-02-03,145.32,146.78,144.89,146.21,7650000,146.21,0,0,0,0,债券,20+ Year Treasury Bond ETF,false,false
+2020-03-02,155.67,158.90,154.23,157.45,15680000,157.45,0,0,0,0,债券,20+ Year Treasury Bond ETF,false,false
+2020-03-16,163.28,170.12,160.45,168.90,28900000,168.90,0,0,0,0,债券,20+ Year Treasury Bond ETF,false,false
+2020-03-23,159.78,164.56,155.23,161.34,22350000,161.34,0,0,0,0,债券,20+ Year Treasury Bond ETF,false,false
+2020-04-01,166.12,168.45,164.78,167.23,12560000,167.23,0,0,0,0,债券,20+ Year Treasury Bond ETF,false,false
+2020-06-01,162.45,164.12,161.23,163.56,9870000,163.56,0,0,0,0,债券,20+ Year Treasury Bond ETF,false,false
+2020-09-01,168.34,170.23,167.12,169.45,8650000,169.45,0,0,0,0,债券,20+ Year Treasury Bond ETF,false,false
+2020-12-01,157.89,159.45,156.78,158.23,9120000,158.23,0,0,0,0,债券,20+ Year Treasury Bond ETF,false,false
+2021-01-04,152.34,154.12,151.23,153.45,10250000,153.45,0,0,0,0,债券,20+ Year Treasury Bond ETF,false,false
+2021-03-01,138.56,140.23,136.78,139.12,14560000,139.12,0,0,0,0,债券,20+ Year Treasury Bond ETF,false,false
+2021-06-01,145.23,147.12,144.56,146.78,8970000,146.78,0,0,0,0,债券,20+ Year Treasury Bond ETF,false,false
+2021-09-01,148.67,150.12,147.34,149.23,7850000,149.23,0,0,0,0,债券,20+ Year Treasury Bond ETF,false,false
+2021-12-01,145.12,147.23,143.89,146.45,9230000,146.45,0,0,0,0,债券,20+ Year Treasury Bond ETF,false,false
+2022-01-03,142.56,144.12,141.23,143.45,11560000,143.45,0,0,0,0,债券,20+ Year Treasury Bond ETF,false,false
+2022-03-01,128.34,130.12,126.78,129.23,15780000,129.23,0,0,0,0,债券,20+ Year Treasury Bond ETF,false,false
+2022-06-01,115.67,118.23,114.12,116.78,18920000,116.78,0,0,0,0,债券,20+ Year Treasury Bond ETF,false,false
+2022-09-01,102.45,105.12,100.23,103.56,22350000,103.56,0,0,0,0,债券,20+ Year Treasury Bond ETF,false,false
+2022-12-01,98.78,101.23,96.45,99.12,19870000,99.12,0,0,0,0,债券,20+ Year Treasury Bond ETF,false,false
+2023-01-03,102.34,105.67,101.12,104.56,16540000,104.56,0,0,0,0,债券,20+ Year Treasury Bond ETF,false,false
+2023-03-01,106.78,109.23,105.34,108.12,14230000,108.12,0,0,0,0,债券,20+ Year Treasury Bond ETF,false,false
+2023-06-01,98.45,100.12,96.78,99.23,17890000,99.23,0,0,0,0,债券,20+ Year Treasury Bond ETF,false,false
+2023-09-01,92.12,94.56,90.23,93.45,21560000,93.45,0,0,0,0,债券,20+ Year Treasury Bond ETF,false,false
+2023-12-01,97.56,100.23,96.12,99.78,15670000,99.78,0,0,0,0,债券,20+ Year Treasury Bond ETF,false,false

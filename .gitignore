@@ -1,0 +1,41 @@
+# Binaries
+backtest
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Test binary
+*.test
+
+# Output of the go coverage tool
+*.out
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+venv/
+env/
+.env
+
+# Private data (Notion exports - do not upload)
+mynition/
+
+# Output files (can be regenerated)
+output/
+
+# Temporary files
+*.tmp
+*.log

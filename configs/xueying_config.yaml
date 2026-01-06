@@ -1,0 +1,82 @@
+# Rebalance-Backtest 雪盈账户配置文件
+
+backtest:
+  start_date: "2022-01-01"
+  end_date: "2025-12-31"
+  initial_capital: 100000
+  benchmark: "SPY"
+  data_dir: "data/xueying"
+
+assets:
+  - symbol: "QQQ"
+    name: "Invesco QQQ Trust"
+  - symbol: "SPY"
+    name: "SPDR S&P 500"
+  - symbol: "SMH"
+    name: "VanEck Semiconductor ETF"
+  - symbol: "QTUM"
+    name: "Defiance Quantum ETF"
+  - symbol: "NLR"
+    name: "VanEck Uranium Nuclear ETF"
+  - symbol: "PPA"
+    name: "Invesco Aerospace Defense ETF"
+  - symbol: "DXJ"
+    name: "WisdomTree Japan Hedged Equity"
+  - symbol: "BRK.B"
+    name: "Berkshire Hathaway"
+  - symbol: "ARKW"
+    name: "ARK Next Gen Internet ETF"
+
+strategy:
+  name: "雪盈估值策略"
+  type: "valuation"
+  params:
+    # 基础权重（根据当前持仓比例设置）
+    target_weights:
+      QQQ: 0.12   # 纳指100
+      SPY: 0.13   # 标普500
+      SMH: 0.21   # 半导体
+      QTUM: 0.10  # 量子/AI
+      NLR: 0.12   # 核能
+      PPA: 0.15   # 航空国防
+      DXJ: 0.08   # 日本
+      BRK.B: 0.09 # 伯克希尔
+      ARKW: 0.00  # 已清仓
+    
+    threshold: 0.05
+    min_trade_value: 100
+    min_rebalance_interval: 7  # 最少7天再平衡一次
+
+    # 估值参数（与 Notion 公式对齐）
+    valuation:
+      # PE百分位阈值
+      extreme_high_pe_rank: 90  # 极度高估
+      high_pe_rank: 75          # 高估
+      low_pe_rank: 20           # 低估
+      core_low_pe_rank: 50      # 核心资产低估阈值
+      
+      # PEG阈值
+      high_peg: 2.0             # PEG高估
+      bubble_peg: 2.5           # PEG泡沫
+      low_peg: 1.5              # PEG低估
+      
+      # ROE阈值
+      good_roe: 20              # 优质ROE
+      poor_roe: 5               # 差ROE
+      
+      # 操作比例
+      trim_ratio: 0.2           # 动态再平衡减仓比例
+      reduce_ratio: 0.3         # 减仓比例
+      sell_ratio: 0.5           # 卖出比例
+      buy_ratio: 0.2            # 买入增仓比例
+
+costs:
+  commission_rate: 0.0003  # 雪盈佣金率 0.03%
+  min_commission: 0.99     # 最低佣金
+  slippage_rate: 0.0005    # 滑点 0.05%
+  tax_rate: 0              # 美股无印花税
+
+output:
+  format: "json"
+  path: "output/xueying/"
+  generate_report: true
